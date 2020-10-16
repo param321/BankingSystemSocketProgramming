@@ -9,13 +9,22 @@
 #include <arpa/inet.h>
 
 int main(int argc,char *argv[]){
+
     if(argc!=3){
-        printf("Invalid arguments in command line");
+        print("Invalid arguments in command line");
         return -1;
     }
+
     char *serverIPAddr = argv[1];
     int serverPortNo = atoi(argv[2]);
+
     printf("IP addr:%s \n",serverIPAddr);
     printf("Port No:%d \n",serverPortNo);
+
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if(sockfd < 0){
+        printf("error in socket");
+        return -1;
+    }
     return 0;
 }
