@@ -46,18 +46,33 @@ int main(int argc,char *argv[]){
     }else{
         printf("listening \n");
     }
-    int addrlen = sizeof(sAddress);
-    int sock_cli = accept(sockfd, (struct sockaddr *)&sAddress,(socklen_t*)&addrlen);
-
-    if(sock_cli<0){
-        printf("error");
-        return -1;
-    }
-
-    char buffer[1024]={0};
-
-    int valread = read(sock_cli, buffer, 1024); 
     
-    printf("%s\n",buffer); 
+    int addrlen = sizeof(sAddress);
+    int sock_cli;
+
+    while(1){
+
+        sock_cli = accept(sockfd, (struct sockaddr *)&sAddress,(socklen_t*)&addrlen);
+
+        if(sock_cli < 0){
+            printf("error");
+            return -1;
+        }
+
+        int p_id = fork();
+
+        if(p_id < 0 ){
+            printf("fork error");
+            return -1;
+        }
+        
+        if(p_id == 0){
+            char buffer[1024]={0};
+            int valread = read(sock_cli, buffer, 1024); 
+            printf("%s\n",buffer);
+            return 0;
+        }
+    }
+    
     return 0;
 }

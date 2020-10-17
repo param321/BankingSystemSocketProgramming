@@ -11,7 +11,7 @@
 int main(int argc,char *argv[]){
 
     if(argc!=3){
-        printf("Invalid arguments in command line");
+        printf("Invalid arguments in command line \n");
         return -1;
     }
 
@@ -42,7 +42,7 @@ int main(int argc,char *argv[]){
     }  
 
     if(connect(clientfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0){ 
-        printf("Connection Failed \n"); 
+        printf("Server not available \n"); 
         return -1; 
     }else{
         printf("Connection made \n");
