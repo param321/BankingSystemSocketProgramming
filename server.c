@@ -7,8 +7,26 @@
 #include <string.h>
 #include <stdio.h>  
 #include <arpa/inet.h>
+#include <time.h>
 
 #define MAX_NO_OF_CLIENTS 100
+
+char* getDate(){
+    int day, month, year;
+	time_t now;
+	time(&now);
+	struct tm *local = localtime(&now);
+	day = local->tm_mday;			
+	month = local->tm_mon + 1;   	
+	year = local->tm_year + 1900;
+    char sday[2], smonth[2], syear[4];
+    sprintf(sday, "%d", day); 
+    sprintf(smonth, "%d", month);
+    sprintf(syear, "%d", year);
+    char date[11] = {sday[0] , sday[1] , ':', smonth[0],smonth[1],':',syear[0],syear[1],syear[2],syear[3]};
+    char *d=date;
+    return d;
+}
 
 int auth_check(char *username,char *password){
     return 0;
@@ -71,7 +89,6 @@ void start(int sock_cli){
 }
 
 int main(int argc,char *argv[]){
-
     if(argc!=2){
         printf("Invalid arguments in command line \n");
         return -1;
