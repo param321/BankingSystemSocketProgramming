@@ -10,6 +10,25 @@
 
 #define MAX_NO_OF_CLIENTS 1000
 
+void start(int sock_cli){
+    char username[1024];
+    char password[1024];
+
+    send(sock_cli, "welcome to bank :) \n" , strlen("welcome to bank :) \n") , 0 );
+    send(sock_cli, "Enter you username:" , strlen("Enter you username:") , 0 );
+
+    bzero(username, sizeof(username)); 
+    read(sock_cli,username, sizeof(username)); 
+    printf("%s",username);
+
+    send(sock_cli, "Enter you password:" , strlen("Enter you password:") , 0 );
+
+
+    bzero(password, sizeof(password)); 
+    read(sock_cli,password, sizeof(password)); 
+    printf("%s",password);
+}
+
 int main(int argc,char *argv[]){
 
     if(argc!=2){
@@ -63,13 +82,13 @@ int main(int argc,char *argv[]){
 
         if(p_id < 0 ){
             printf("fork error");
+            close(sock_cli);
             return -1;
         }
         
         if(p_id == 0){
-            char buffer[1024]={0};
-            int valread = read(sock_cli, buffer, 1024); 
-            printf("%s\n",buffer);
+            start(sock_cli);
+            close(sock_cli);
             return 0;
         }
     }

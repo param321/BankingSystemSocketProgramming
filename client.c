@@ -48,13 +48,27 @@ int main(int argc,char *argv[]){
         printf("Connection made \n");
     }
 
-    send(clientfd, "hello" , strlen("hello") , 0 ); 
+    //Displays Enter You Username
+    char buffer[1024];
+    int valread = read(clientfd, buffer, 1024); 
+    printf("%s",buffer);
 
-    printf("Hello message sent\n"); 
+    //Username
+    bzero(buffer, sizeof(buffer)); 
+    int n = 0; 
+    while((buffer[n++] = getchar()) != '\n'); 
+    write(clientfd, buffer , strlen(buffer)); 
 
-    // int valread = read( sock , buffer, 1024); 
+    //Displays Enter You Username
+    bzero(buffer, sizeof(buffer)); 
+    valread = read(clientfd, buffer, 1024); 
+    printf("%s",buffer);
 
-    // printf("%s\n",buffer ); 
+    //Password
+    bzero(buffer, sizeof(buffer)); 
+    n = 0; 
+    while((buffer[n++] = getchar()) != '\n'); 
+    write(clientfd, buffer , strlen(buffer)); 
 
     return 0;
 }
