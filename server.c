@@ -55,9 +55,29 @@ void showMini(int sock_cli){
 }
 
 int auth_check(char *username,char *password){
-    // printf("%ld",strlen(username));
-    // printf("%ld",strlen(password));
-    return 1;
+    FILE* ptr = fopen("Login_file","r"); 
+    if(ptr==NULL){ 
+        printf("Login File Missing"); 
+        return 0; 
+    } 
+    char uName[100];
+    char pWord[100];
+    char type[10]; 
+    char n[2] = "\n";
+    while(fscanf(ptr,"%s%s%s",uName,pWord,type)==3){ 
+        strcat(uName,n);
+        strcat(pWord,n);
+        if(strcmp(username,uName)==0&&strcmp(pWord,password)==0){
+            if(strcmp(type,"C")==0){
+                return 1;
+            }else if(strcmp(type,"A")==0){
+                return 2;
+            }else if(strcmp(type,"P")==0){
+                return 3;
+            }
+        } 
+    }
+    return 0;
 }
 
 void customer(int sock_cli){
