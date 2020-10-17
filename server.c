@@ -28,21 +28,48 @@ char* getDate(){
     return d;
 }
 
+void showBal(int sock_cli){
+    return;
+}
+
+void showMini(int sock_cli){
+    return;
+}
+
 int auth_check(char *username,char *password){
-    return 0;
+    // printf("%ld",strlen(username));
+    // printf("%ld",strlen(password));
+    return 1;
 }
 
-void customer(int solck_cli){
-    int x;
+void customer(int sock_cli){
+    while(1){
+        char buffer[1024];
+        bzero(buffer, sizeof(buffer)); 
+        read(sock_cli,buffer, sizeof(buffer)); 
+        printf("%s",buffer);
+
+        if(strcmp(buffer,"EXIT\n")==0){
+            close(sock_cli);
+            printf("SERVER EXITING\n");
+            return;
+        }else if(strcmp(buffer,"BAL\n")==0){
+            showBal(sock_cli);
+        }else if(strcmp(buffer,"MINI\n")==0){
+            showMini(sock_cli);
+        }else{
+            send(sock_cli,"Not an valid input!! Pls Try again.\n", strlen("Not an valid input!! Pls Try again.\n") , 0 );
+        }
+    }
     return ;
 }
 
-void admin(int solck_cli){
-    int x;
+void admin(int sock_cli){
+    
     return ;
 }
 
-void police(int solck_cli){
+void police(int sock_cli){
     int x;
     return ;
 }
@@ -61,6 +88,7 @@ void assign_user(int sock_cli,int auth_id,char *username){
         send(sock_cli, "0" , strlen("0") , 0 );
         return ;
     }
+    return;
 }
 
 void start(int sock_cli){

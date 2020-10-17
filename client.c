@@ -8,6 +8,38 @@
 #include <stdio.h>  
 #include <arpa/inet.h>
 
+void customer(int clientfd){
+    printf("To see your\n Available Balance type BAL\n MINI Statement type MINI\n To exit Type EXIT\n");
+    while(1){
+        char buffer[1024];
+
+        bzero(buffer, sizeof(buffer)); 
+        int n = 0; 
+        while((buffer[n++] = getchar()) != '\n'); 
+        write(clientfd, buffer , strlen(buffer)); 
+
+        if(strcmp(buffer,"EXIT\n")==0){
+            printf("EXITING\n");
+            close(clientfd);
+            break;
+        }
+
+        bzero(buffer, sizeof(buffer)); 
+        read(clientfd,buffer, sizeof(buffer)); 
+        printf("%s",buffer);
+
+    }
+    return;
+}
+
+void admin(int clientfd){
+    return;
+}
+
+void police(int clientfd){
+    return;
+}
+
 int main(int argc,char *argv[]){
 
     if(argc!=3){
@@ -75,17 +107,21 @@ int main(int argc,char *argv[]){
 
     if(buffer[0] == '0'){
         printf("Invaild Credentials\nLogin Failed\n");
+        close(clientfd);
         return -1;
     }
 
-    printf("Login Successful");
+    printf("Login Successful\n");
 
     if(buffer[0] == '1'){
         printf("Welcome Customer\n");
+        customer(clientfd);
     }else if(buffer[0] == '2'){
         printf("Welcome Admin\n");
+        admin(clientfd);
     }else if(buffer[0] == '3'){
         printf("Welcome Police\n");
+        police(clientfd);
     }
 
     return 0;
