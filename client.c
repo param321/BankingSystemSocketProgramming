@@ -37,6 +37,7 @@ void admin(int clientfd){
 }
 
 void police(int clientfd){
+    
     return;
 }
 
