@@ -8,14 +8,46 @@
 #include <stdio.h>  
 #include <arpa/inet.h>
 
-#define MAX_NO_OF_CLIENTS 1000
+#define MAX_NO_OF_CLIENTS 100
+
+int auth_check(char *username,char *password){
+    return 0;
+}
+
+void assign_user(int sock_cli,int auth_id){
+    if(auth_id == 1){
+        send(sock_cli, "1" , strlen("1") , 0 );
+        customer(sock_cli);
+    }else if(auth_id == 2){
+        send(sock_cli, "2" , strlen("2") , 0 );
+        admin(sock_cli);
+    }else if(auth_id == 3){
+        send(sock_cli, "3" , strlen("3") , 0 );
+        police(sock_cli);
+    }else{
+        send(sock_cli, "0" , strlen("0") , 0 );
+        return ;
+    }
+}
+
+void customer(int solck_cli){
+    return ;
+}
+
+void admin(int solck_cli){
+    return ;
+}
+
+void police(int solck_cli){
+    return ;
+}
 
 void start(int sock_cli){
     char username[1024];
     char password[1024];
 
-    send(sock_cli, "welcome to bank :) \n" , strlen("welcome to bank :) \n") , 0 );
-    send(sock_cli, "Enter you username:" , strlen("Enter you username:") , 0 );
+    send(sock_cli, "Welcome to Bank :) \n" , strlen("Welcome to Bank :) \n") , 0 );
+    send(sock_cli, "Enter you Username:" , strlen("Enter you Username:") , 0 );
 
     bzero(username, sizeof(username)); 
     read(sock_cli,username, sizeof(username)); 
@@ -23,10 +55,16 @@ void start(int sock_cli){
 
     send(sock_cli, "Enter you password:" , strlen("Enter you password:") , 0 );
 
-
     bzero(password, sizeof(password)); 
     read(sock_cli,password, sizeof(password)); 
     printf("%s",password);
+
+
+    int auth_id = auth_check(username,password);
+
+    assign_user(sock_cli,auth_id);
+
+    return;
 }
 
 int main(int argc,char *argv[]){

@@ -70,5 +70,23 @@ int main(int argc,char *argv[]){
     while((buffer[n++] = getchar()) != '\n'); 
     write(clientfd, buffer , strlen(buffer)); 
 
+    bzero(buffer, sizeof(buffer)); 
+    valread = read(clientfd, buffer, 1024); 
+
+    if(buffer[0] == '0'){
+        printf("Invaild Credentials\nLogin Failed\n");
+        return -1;
+    }
+
+    printf("Login Successful");
+
+    if(buffer[0] == '1'){
+        printf("Welcome Customer\n");
+    }else if(buffer[0] == '2'){
+        printf("Welcome Admin\n");
+    }else if(buffer[0] == '3'){
+        printf("Welcome Police\n");
+    }
+
     return 0;
 }
