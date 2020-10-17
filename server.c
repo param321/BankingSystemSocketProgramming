@@ -28,11 +28,29 @@ char* getDate(){
     return d;
 }
 
-void showBal(int sock_cli){
+void sendText(int sock_cli,char* text){
+    send(sock_cli,text,strlen(text),0);
+    return;
+}
+
+int getBal(char *username){
+    return 0;
+}
+
+void showBal(int sock_cli,char *username){
+    int bal = getBal(username);
+    char balS[20];
+    sprintf(balS,"%d",bal);
+    char sen[20] = "Your Balance is: ";
+    strcat(sen,balS);
+    char c[2]="\n";
+    strcat(sen,c);
+    sendText(sock_cli,sen);
     return;
 }
 
 void showMini(int sock_cli){
+    sendText(sock_cli,"Mini Statement Here\n");
     return;
 }
 
@@ -54,11 +72,12 @@ void customer(int sock_cli){
             printf("SERVER EXITING\n");
             return;
         }else if(strcmp(buffer,"BAL\n")==0){
-            showBal(sock_cli);
+            showBal(sock_cli,"Param");
         }else if(strcmp(buffer,"MINI\n")==0){
             showMini(sock_cli);
         }else{
-            send(sock_cli,"Not an valid input!! Pls Try again.\n", strlen("Not an valid input!! Pls Try again.\n") , 0 );
+            sendText(sock_cli,"Not an valid input!! Pls Try again.\n");
+            // send(sock_cli,"Not an valid input!! Pls Try again.\n", strlen("Not an valid input!! Pls Try again.\n") , 0 );
         }
     }
     return ;
@@ -76,16 +95,20 @@ void police(int sock_cli){
 
 void assign_user(int sock_cli,int auth_id,char *username){
     if(auth_id == 1){
-        send(sock_cli, "1" , strlen("1") , 0 );
+        sendText(sock_cli,"1");
+        // send(sock_cli, "1" , strlen("1") , 0 );
         customer(sock_cli);
     }else if(auth_id == 2){
-        send(sock_cli, "2" , strlen("2") , 0 );
+        sendText(sock_cli,"2");
+        // send(sock_cli, "2" , strlen("2") , 0 );
         admin(sock_cli);
     }else if(auth_id == 3){
-        send(sock_cli, "3" , strlen("3") , 0 );
+        sendText(sock_cli,"3");
+        // send(sock_cli, "3" , strlen("3") , 0 );
         police(sock_cli);
     }else{
-        send(sock_cli, "0" , strlen("0") , 0 );
+        sendText(sock_cli,"0");
+        // send(sock_cli, "0" , strlen("0") , 0 );
         return ;
     }
     return;
@@ -94,15 +117,17 @@ void assign_user(int sock_cli,int auth_id,char *username){
 void start(int sock_cli){
     char username[1024];
     char password[1024];
-
-    send(sock_cli, "Welcome to Bank :) \n" , strlen("Welcome to Bank :) \n") , 0 );
-    send(sock_cli, "Enter you Username:" , strlen("Enter you Username:") , 0 );
+    sendText(sock_cli,"Welcome to Bank :) \n");
+    sendText(sock_cli,"Enter you Username:");
+    // send(sock_cli, "Welcome to Bank :) \n" , strlen("Welcome to Bank :) \n") , 0 );
+    // send(sock_cli, "Enter you Username:" , strlen("Enter you Username:") , 0 );
 
     bzero(username, sizeof(username)); 
     read(sock_cli,username, sizeof(username)); 
     printf("%s",username);
 
-    send(sock_cli, "Enter you password:" , strlen("Enter you password:") , 0 );
+    sendText(sock_cli,"Enter you password:");
+    // send(sock_cli, "Enter you password:" , strlen("Enter you password:") , 0 );
 
     bzero(password, sizeof(password)); 
     read(sock_cli,password, sizeof(password)); 
