@@ -14,7 +14,22 @@ int auth_check(char *username,char *password){
     return 0;
 }
 
-void assign_user(int sock_cli,int auth_id){
+void customer(int solck_cli){
+    int x;
+    return ;
+}
+
+void admin(int solck_cli){
+    int x;
+    return ;
+}
+
+void police(int solck_cli){
+    int x;
+    return ;
+}
+
+void assign_user(int sock_cli,int auth_id,char *username){
     if(auth_id == 1){
         send(sock_cli, "1" , strlen("1") , 0 );
         customer(sock_cli);
@@ -28,18 +43,6 @@ void assign_user(int sock_cli,int auth_id){
         send(sock_cli, "0" , strlen("0") , 0 );
         return ;
     }
-}
-
-void customer(int solck_cli){
-    return ;
-}
-
-void admin(int solck_cli){
-    return ;
-}
-
-void police(int solck_cli){
-    return ;
 }
 
 void start(int sock_cli){
@@ -62,7 +65,7 @@ void start(int sock_cli){
 
     int auth_id = auth_check(username,password);
 
-    assign_user(sock_cli,auth_id);
+    assign_user(sock_cli,auth_id,"param");
 
     return;
 }
