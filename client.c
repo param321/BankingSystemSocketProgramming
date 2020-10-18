@@ -33,6 +33,93 @@ void customer(int clientfd){
 }
 
 void admin(int clientfd){
+    while(1){
+        printf("If you want to DEBIT/CREDIT some amount of customer type YES or to exit type EXIT\n");
+
+        char buffer[1024];
+        char buffer1[1024];
+
+        bzero(buffer, sizeof(buffer)); 
+        int n = 0; 
+        while((buffer[n++] = getchar()) != '\n'); 
+        write(clientfd, buffer , strlen(buffer)); 
+
+        if(strcmp(buffer,"EXIT\n")==0){
+            printf("EXITING\n");
+            close(clientfd);
+            break;
+        }
+
+        bzero(buffer1, sizeof(buffer1)); 
+        read(clientfd,buffer1, sizeof(buffer1)); 
+        printf("%s",buffer1);
+
+        if(strcmp(buffer,"YES\n")==0){
+            bzero(buffer, sizeof(buffer)); 
+            n = 0; 
+            while((buffer[n++] = getchar()) != '\n'); 
+            write(clientfd, buffer , strlen(buffer)); 
+
+            if(strcmp(buffer,"EXIT\n")==0){
+                printf("EXITING\n");
+                close(clientfd);
+                break;
+            }else{
+                bzero(buffer, sizeof(buffer)); 
+                read(clientfd,buffer, sizeof(buffer)); 
+                // printf("%s",buffer);
+                if(strcmp(buffer,"0")==0){
+                    printf("Not a valid CustomerID.\n");
+                }else{
+                    printf("Type CREDIT or DEBIT to credit or debit respectively \n to exit type EXIT\n");
+
+                    bzero(buffer, sizeof(buffer)); 
+                    n = 0; 
+                    while((buffer[n++] = getchar()) != '\n'); 
+                    write(clientfd, buffer , strlen(buffer)); 
+                    
+                    if(strcmp(buffer,"EXIT\n")==0){
+
+                        printf("EXITING\n");
+                        close(clientfd);
+                        break;
+
+                    }else if(strcmp(buffer,"CREDIT\n")==0){
+
+                        printf("Type the amount to credit\n");
+
+                        bzero(buffer, sizeof(buffer)); 
+                        n = 0; 
+                        while((buffer[n++] = getchar()) != '\n'); 
+                        write(clientfd, buffer , strlen(buffer));
+
+                        bzero(buffer, sizeof(buffer)); 
+                        read(clientfd,buffer, sizeof(buffer)); 
+                        printf("%s",buffer);
+
+                        write(clientfd, "Done" , strlen("Done"));
+
+                    }else if(strcmp(buffer,"DEBIT\n")==0){
+
+                        printf("Type the amount to debit\n");
+
+                        bzero(buffer, sizeof(buffer)); 
+                        n = 0; 
+                        while((buffer[n++] = getchar()) != '\n'); 
+                        write(clientfd, buffer , strlen(buffer));
+
+                        bzero(buffer, sizeof(buffer)); 
+                        read(clientfd,buffer, sizeof(buffer)); 
+                        printf("%s",buffer);
+
+                    }else{
+                        printf("Not an valid input!! Pls Try again.\n");
+                    }
+                }
+            }
+        }
+
+    }
     return;
 }
 
