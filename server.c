@@ -11,6 +11,17 @@
 
 #define MAX_NO_OF_CLIENTS 100
 
+char* purifyString(char *stg){
+    char s[1024]={0};
+    int n=0;
+    while(stg[n]!='\n'){
+        s[n]=stg[n];
+        n++;
+    }
+    char *ss=s;
+    return ss;
+}
+
 char* getDate(){
     int day, month, year;
 	time_t now;
@@ -23,7 +34,7 @@ char* getDate(){
     sprintf(sday, "%d", day); 
     sprintf(smonth, "%d", month);
     sprintf(syear, "%d", year);
-    char date[11] = {sday[0] , sday[1] , ':', smonth[0],smonth[1],':',syear[0],syear[1],syear[2],syear[3]};
+    char date[11] = {sday[0] , sday[1] , '/', smonth[0],smonth[1],'/',syear[0],syear[1],syear[2],syear[3]};
     char *d=date;
     return d;
 }
@@ -34,12 +45,9 @@ void sendText(int sock_cli,char* text){
 }
 
 int getBal(char *username,int sock_cli){
-    char uName[200];
-    int n=0;
-    while(username[n]!='\n'){
-        uName[n]=username[n];
-        n++;
-    }
+
+    char *uName = purifyString(username);
+
     FILE* ptr = fopen(uName,"r"); 
     if(ptr==NULL){ 
         sendText(sock_cli,"Person does not exist\n"); 
@@ -50,6 +58,7 @@ int getBal(char *username,int sock_cli){
     while(fscanf(ptr,"%*s %*s %s",sBal)==1){ 
         fBal = sBal;
     }
+    fclose(ptr);
     printf(":%s:\n",fBal);
     int bal = atoi(fBal);
     return bal;
@@ -67,8 +76,29 @@ void showBal(int sock_cli,char *username,int bal){
     }
 }
 
-void showMini(int sock_cli){
-    sendText(sock_cli,"Mini Statement Here\n");
+void showMini(int sock_cli,char *username){
+    char *uName = purifyString(username); 
+
+    char mini[1024] = "MINI Statement Here:\n";
+    char br[2] = "\n";
+    char s[2] = " ";
+    printf("%s",uName);
+    FILE* ptr = fopen(uName,"r"); 
+    if(ptr==NULL){ 
+        sendText(sock_cli,"MINI does not exist\n"); 
+        return; 
+    } 
+    char sDat[100],sCod[10],sBal[100];
+    while(fscanf(ptr,"%s %s %s",sDat,sCod,sBal)==3){ 
+        strcat(mini,sDat);
+        strcat(mini,s);
+        strcat(mini,sCod);
+        strcat(mini,s);
+        strcat(mini,sBal);
+        strcat(mini,br);
+    }
+    fclose(ptr);
+    sendText(sock_cli,mini);
     return;
 }
 
@@ -87,20 +117,77 @@ void customer(int sock_cli,char *username){
             int bal = getBal(username,sock_cli);
             showBal(sock_cli,username,bal);
         }else if(strcmp(buffer,"MINI\n")==0){
-            showMini(sock_cli);
+            showMini(sock_cli,username);
         }else{
             sendText(sock_cli,"Not an valid input!! Pls Try again.\n");
         }
     }
 }
 
+int custORnot(char* username){
+    char *uName = purifyString(username);
+    FILE* ptr = fopen("Login_file","r"); 
+    if(ptr==NULL){ 
+        printf("Login File Missing"); 
+        return 0; 
+    } 
+    char uname[100];
+    char pWord[100];
+    char type[10]; 
+    char n[2] = "\n";
+    while(fscanf(ptr,"%s%s%s",uname,pWord,type)==3){ 
+        if(strcmp(uname,uName)==0){
+            if(strcmp(type,"C")==0){
+                return 1;
+            }else if(strcmp(type,"A")==0){
+                return 0;
+            }else if(strcmp(type,"P")==0){
+                return 0;
+            }
+        } 
+    }
+    return -1;
+}
+
 void admin(int sock_cli){
-    
+    while(1){
+        char buffer[1024];
+        bzero(buffer, sizeof(buffer)); 
+        read(sock_cli,buffer, sizeof(buffer)); 
+        printf("%s",buffer);
+
+        if(strcmp(buffer,"EXIT\n")==0){
+            close(sock_cli);
+            printf("SERVER EXITING\n");
+            return;
+        }else{
+            
+        }
+    }
     return ;
 }
 
 void police(int sock_cli){
-    int x;
+    while(1){
+        char buffer[1024];
+        bzero(buffer, sizeof(buffer)); 
+        read(sock_cli,buffer, sizeof(buffer)); 
+        printf("%s",buffer);
+
+        if(strcmp(buffer,"EXIT\n")==0){
+            close(sock_cli);
+            printf("SERVER EXITING\n");
+            return;
+        }else{
+            if(custORnot(buffer)==-1){
+                sendText(sock_cli,"Not an valid CustomerID. Please try again\n");
+            }else if(custORnot(buffer) == 0){
+                sendText(sock_cli,"You have no access to view MINI Statement of Police or Admin. Please try again\n");
+            }else if(custORnot(buffer) == 1){
+                showMini(sock_cli,buffer);
+            }
+        }
+    }
     return ;
 }
 
@@ -150,8 +237,8 @@ int auth_check(char *username,char *password){
 void start(int sock_cli){
     char username[1024];
     char password[1024];
-    sendText(sock_cli,"Welcome to Bank :) \n");
-    sendText(sock_cli,"Enter you Username:");
+    sendText(sock_cli,"Welcome to Bank :) \nEnter you Username:");
+    // sendText(sock_cli,"Enter you Username:");
     // send(sock_cli, "Welcome to Bank :) \n" , strlen("Welcome to Bank :) \n") , 0 );
     // send(sock_cli, "Enter you Username:" , strlen("Enter you Username:") , 0 );
 

@@ -37,7 +37,26 @@ void admin(int clientfd){
 }
 
 void police(int clientfd){
-    
+    printf("To see Customer MINI Statement type CustomerID\n To exit Type EXIT\n");
+    while(1){
+        char buffer[1024];
+
+        bzero(buffer, sizeof(buffer)); 
+        int n = 0; 
+        while((buffer[n++] = getchar()) != '\n'); 
+        write(clientfd, buffer , strlen(buffer)); 
+
+        if(strcmp(buffer,"EXIT\n")==0){
+            printf("EXITING\n");
+            close(clientfd);
+            break;
+        }
+
+        bzero(buffer, sizeof(buffer)); 
+        read(clientfd,buffer, sizeof(buffer)); 
+        printf("%s",buffer);
+
+    }
     return;
 }
 
@@ -92,7 +111,7 @@ int main(int argc,char *argv[]){
     while((buffer[n++] = getchar()) != '\n'); 
     write(clientfd, buffer , strlen(buffer)); 
 
-    //Displays Enter You Username
+    //Displays Enter You Password
     bzero(buffer, sizeof(buffer)); 
     valread = read(clientfd, buffer, 1024); 
     printf("%s",buffer);
