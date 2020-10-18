@@ -34,7 +34,7 @@ char* getDate(){
     sprintf(sday, "%d", day); 
     sprintf(smonth, "%d", month);
     sprintf(syear, "%d", year);
-    char date[11] = {sday[0] , sday[1] , '/', smonth[0],smonth[1],'/',syear[0],syear[1],syear[2],syear[3]};
+    char date[12] = {sday[0] , sday[1] , '/', smonth[0],smonth[1],'/',syear[0],syear[1],syear[2],syear[3]};
     char *d=date;
     return d;
 }
@@ -171,34 +171,38 @@ int isNumber(char *amount){
     return 1;
 }
 
-void credit_amount(char *amount,char *username,int cur_bal){
-    printf("11111");
+// int to_num(char* amount){
+
+// }
+
+void credit_amount(char *amount,char *username,int sock_cli){
+    int cur_bal= getBal(username);
     int am = atoi(amount);
-    int new_bal = 0 + am;
-    printf("22222");
+    int new_bal = cur_bal + am;
+    char *sbal;
+    // sprintf(sbal, "%d",new_bal);
+    printf("--%d %d--",cur_bal,am);
     char *uName = purifyString(username);
-    printf(":%s:",uName);
-    char *date = getDate();
-    printf("333333");
+    char *cur_date = (char *)malloc(12*sizeof(char));
+    time_t t = time(NULL);
+  	struct tm t1 = *localtime(&t);
+    sprintf(cur_date,"%d/%d/%d",t1.tm_mday,t1.tm_mon+1,t1.tm_year+1900);
+
+    printf("::%s::",cur_date);
     FILE* ptr = fopen(uName,"a"); 
     if(ptr==NULL){ 
-        printf("Noo :(((");
         return; 
     } 
-    printf("Done :)");
-    char *sbal;
-    sprintf(sbal, "%d",new_bal);
 
     fprintf(ptr,"\n");
-    fprintf(ptr,"%s",date);
+    fprintf(ptr,"%s",cur_date);
     fprintf(ptr," ");
     fprintf(ptr,"%s","CREDIT");
     fprintf(ptr," ");
-    fprintf(ptr,"%s",sbal);
-
-    printf("Done :))");
-
+    fprintf(ptr,"%d",new_bal);
     fclose(ptr);
+
+    sendText(sock_cli,"Amount Sucessfully Credited\n");
     return;
 }
 
@@ -206,22 +210,24 @@ void admin(int sock_cli){
     while(1){
 
         char buffer[1024];
-        bzero(buffer, sizeof(buffer)); 
-        read(sock_cli,buffer, sizeof(buffer)); 
-        printf("%s",buffer);
+        char *start = readText(sock_cli);
+        // bzero(buffer, sizeof(buffer)); 
+        // read(sock_cli,buffer, sizeof(buffer)); 
+        printf("%s",start);
 
-        if(strcmp(buffer,"EXIT\n")==0){
+        if(strcmp(start,"EXIT\n")==0){
             close(sock_cli);
             printf("SERVER EXITING\n");
             return;
-        }else if(strcmp(buffer,"YES\n")==0){
+        }else if(strcmp(start,"YES\n")==0){
             sendText(sock_cli,"Type the CustomerID to proceed or type EXIT to exit\n");
 
             bzero(buffer, sizeof(buffer)); 
             read(sock_cli,buffer, sizeof(buffer)); 
             printf("%s",buffer);
-
-            char *username=readText(sock_cli);
+            char un[1024]={0};
+            strcpy(un,buffer);
+            // char *username=readText(sock_cli);
 
             if(strcmp(buffer,"EXIT\n")==0){
 
@@ -250,48 +256,16 @@ void admin(int sock_cli){
                         bzero(buffer, sizeof(buffer)); 
                         read(sock_cli,buffer, sizeof(buffer)); 
                         printf("%s",buffer);
-                        char *amount = purifyString(buffer);
-                            // char uName[1024]={0};
-                            // strcpy(uName,username);
-                            // //int cur_bal = getBal(uName);
-                            // printf(":%s:\n",username);
+                        // char *amount = purifyString(buffer);
+                        // printf("xx%sxx",amount);
+                        credit_amount(buffer,un,sock_cli);
 
-                            printf("11111");
-
-                            int am = atoi(purifyString(amount));
-                            int new_bal = 0 + am;
-                            printf("22222");
-                            char *uName = purifyString(username);
-                            printf(":%s:",uName);
-                            char *date = getDate();
-                            printf("333333");
-                            FILE* ptr = fopen(uName,"a"); 
-                            if(ptr==NULL){ 
-                                printf("Noo :(((");
-                            } 
-                            printf("Done :)");
-                            char *sbal;
-                            sprintf(sbal, "%d",new_bal);
-
-                            fprintf(ptr,"\n%s %s %s",date,"CREDIT",sbal);
-                            printf("Done :))");
-
-                            fclose(ptr);
-
-
-                            sendText(sock_cli,"Amount Sucessfully Credited\n");
-
-                            bzero(buffer, sizeof(buffer)); 
-                            read(sock_cli,buffer, sizeof(buffer)); 
-                            printf("%s",buffer);
-                            //credit_amount(amount,username,0);
                     }else if(strcmp(buffer,"DEBIT\n")==0){
                         bzero(buffer, sizeof(buffer)); 
                         read(sock_cli,buffer, sizeof(buffer)); 
                         printf("%s",buffer);
 
                         char *amount = purifyString(buffer);
-
                         if(isNumber(amount)){
                             sendText(sock_cli,"Amount Sucessfully Credited\n");
                         }else{

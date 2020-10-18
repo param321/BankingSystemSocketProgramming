@@ -9,8 +9,8 @@
 #include <arpa/inet.h>
 
 void customer(int clientfd){
-    printf("To see your\n Available Balance type BAL\n MINI Statement type MINI\n To exit Type EXIT\n");
     while(1){
+        printf("To see your\n Available Balance type BAL\n MINI Statement type MINI\n To exit Type EXIT\n");
         char buffer[1024];
 
         bzero(buffer, sizeof(buffer)); 
@@ -65,9 +65,11 @@ void admin(int clientfd){
                 close(clientfd);
                 break;
             }else{
+
                 bzero(buffer, sizeof(buffer)); 
                 read(clientfd,buffer, sizeof(buffer)); 
-                // printf("%s",buffer);
+                //printf("%s",buffer);
+
                 if(strcmp(buffer,"0")==0){
                     printf("Not a valid CustomerID.\n");
                 }else{
@@ -96,8 +98,6 @@ void admin(int clientfd){
                         bzero(buffer, sizeof(buffer)); 
                         read(clientfd,buffer, sizeof(buffer)); 
                         printf("%s",buffer);
-
-                        write(clientfd, "Done" , strlen("Done"));
 
                     }else if(strcmp(buffer,"DEBIT\n")==0){
 
