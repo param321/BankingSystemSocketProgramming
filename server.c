@@ -179,16 +179,52 @@ void credit_amount(char *amount,char *username,int sock_cli){
     int cur_bal= getBal(username);
     int am = atoi(amount);
     int new_bal = cur_bal + am;
+
     char *sbal;
     // sprintf(sbal, "%d",new_bal);
-    printf("--%d %d--",cur_bal,am);
+    // printf("--%d %d--",cur_bal,am);
     char *uName = purifyString(username);
     char *cur_date = (char *)malloc(12*sizeof(char));
     time_t t = time(NULL);
   	struct tm t1 = *localtime(&t);
     sprintf(cur_date,"%d/%d/%d",t1.tm_mday,t1.tm_mon+1,t1.tm_year+1900);
 
-    printf("::%s::",cur_date);
+    // printf("::%s::",cur_date);
+    FILE* ptr = fopen(uName,"a"); 
+    if(ptr==NULL){ 
+        return; 
+    } 
+
+    fprintf(ptr,"\n");
+    fprintf(ptr,"%s",cur_date);
+    fprintf(ptr," ");
+    fprintf(ptr,"%s","CREDIT");
+    fprintf(ptr," ");
+    fprintf(ptr,"%d",new_bal);
+    fclose(ptr);
+
+    sendText(sock_cli,"Amount Sucessfully Credited\n");
+    return;
+}
+
+void debit_amount(char *amount,char *username,int sock_cli){
+    int cur_bal= getBal(username);
+    int am = atoi(amount);
+    int new_bal = cur_bal - am;
+    char *sbal;
+    if(new_bal < 0){
+        sendText(sock_cli,"UNDERFLOW ERROR!! Amount to be debited is greater than the BALANCE\n");
+        return;
+    }
+    // sprintf(sbal, "%d",new_bal);
+    // printf("--%d %d--",cur_bal,am);
+    char *uName = purifyString(username);
+    char *cur_date = (char *)malloc(12*sizeof(char));
+    time_t t = time(NULL);
+  	struct tm t1 = *localtime(&t);
+    sprintf(cur_date,"%d/%d/%d",t1.tm_mday,t1.tm_mon+1,t1.tm_year+1900);
+
+    // printf("::%s::",cur_date);
     FILE* ptr = fopen(uName,"a"); 
     if(ptr==NULL){ 
         return; 
@@ -265,12 +301,7 @@ void admin(int sock_cli){
                         read(sock_cli,buffer, sizeof(buffer)); 
                         printf("%s",buffer);
 
-                        char *amount = purifyString(buffer);
-                        if(isNumber(amount)){
-                            sendText(sock_cli,"Amount Sucessfully Credited\n");
-                        }else{
-                            sendText(sock_cli,"The number was invalid!!\nThe Transaction Falied!!\n");
-                        }
+                        debit_amount(buffer,un,sock_cli);
                     }else{
                         
                     }
